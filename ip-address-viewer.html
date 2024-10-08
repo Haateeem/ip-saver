@@ -48,18 +48,27 @@
             });
 
         function addToSheet() {
-            const text = document.getElementById('ip').innerText;
-            const appScriptUrl = 'https://script.google.com/macros/s/AKfycbzelixtp50ZwbpKEUU1FjfSCiFhGvxHgzfwxVnAV_A6EFQl6Ra0_4_djGfwZ-GHUu3Zyg/exec';
+            const text = document.getElementById('ip').innerText; // Div se text uthana
+            const appScriptUrl = 'https://script.google.com/macros/s/AKfycbwV3DR9LtiCra0WqO1ZYKqwSHKIFF6FGN70I8A-u9K5YJL4EUPhxqIoBagBfzc66El8jw/exec';
 
+            console.log('Text to be sent:', text); // Debugging line
             fetch(appScriptUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({ text: text }),
             })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Response:', response);
+                    return response.json(); // Parse the JSON response
+                })
                 .then(data => console.log('Success:', data))
                 .catch(error => console.error('Error:', error));
         }
+
+
     </script>
 </body>
 
