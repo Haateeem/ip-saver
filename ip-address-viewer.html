@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Public IP Address</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        #ip {
+            font-size: 1.5rem;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        button {
+            margin-top: 20px;
+            height: 30px;
+            width: auto;
+
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Your Public IP Address</h1>
+    <div id="ip">Loading...</div>
+    <button onclick="addToSheet()">Save</button>
+
+    <script>
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ip').textContent = data.ip;
+            })
+            .catch(error => {
+                console.error('Error fetching IP address:', error);
+                document.getElementById('ip').textContent = 'Unable to retrieve IP address.';
+            });
+
+        function addToSheet() {
+            const text = document.getElementById('ip').innerText;
+            const appScriptUrl = 'https://script.google.com/macros/s/AKfycbzc-m4ysY8cim2iw_ld68ZjOGPPVb4L0NTecxgwYmmZ_DGVOjRToBunZk5XVTbD6Lxc5w/exec';
+
+            fetch(appScriptUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text }),
+            })
+                .then(response => response.json())
+                .then(data => console.log('Success:', data))
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+
+</html>
