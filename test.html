@@ -32,22 +32,40 @@
     <h1>Real-Time Coordinate Tracker</h1>
     <div id="coordinates">Latitude: --, Longitude: --</div>
     <button id="startTracking">Start Tracking</button>
+    <button id="stopTracking">Stop Tracking</button>
+
 
     <script>
         const coordinatesDiv = document.getElementById('coordinates');
         const startButton = document.getElementById('startTracking');
+        const stopButton = document.getElementById('stopTracking');
+
 
         let watchId;
 
         function updateCoordinates(position) {
-            const { latitude, longitude } = position.coords;
-            coordinatesDiv.textContent = `Latitude: ${latitude.toFixed(6)}, Longitude: ${longitude.toFixed(6)}`;
+            const { latitude, longitude, accuracy } = position.coords;
+            coordinatesDiv.textContent = `Latitude: ${latitude.toFixed(6)}, Longitude: ${longitude.toFixed(6)}, Accuracy: ±${accuracy} meters`;
         }
 
+
         function handleError(error) {
-            console.error("Error getting location: ", error);
-            coordinatesDiv.textContent = "Unable to retrieve location.";
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    coordinatesDiv.textContent = "Permission denied. Please allow location access.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    coordinatesDiv.textContent = "Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    coordinatesDiv.textContent = "The request to get user location timed out.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    coordinatesDiv.textContent = "An unknown error occurred.";
+                    break;
+            }
         }
+
 
         function startTracking() {
             if (navigator.geolocation) {
@@ -75,6 +93,13 @@
         startButton.addEventListener('click', () => {
             startTracking();
             startButton.disabled = true; // Disable the button after starting tracking
+        });
+
+
+        stopButton.addEventListener('click', () => {
+            stopTracking();
+            startButton.disabled = false; // Re-enable the start button
+            stopButton.disabled = true; // Disable the stop button after stopping tracking
         });
 
 
