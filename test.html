@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Coordinate Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #coordinates {
+            font-size: 24px;
+            margin: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Real-Time Coordinate Tracker</h1>
+    <div id="coordinates">Latitude: --, Longitude: --</div>
+    <button id="startTracking">Start Tracking</button>
+
+    <script>
+        const coordinatesDiv = document.getElementById('coordinates');
+        const startButton = document.getElementById('startTracking');
+
+        let watchId;
+
+        function updateCoordinates(position) {
+            const { latitude, longitude } = position.coords;
+            coordinatesDiv.textContent = `Latitude: ${latitude.toFixed(6)}, Longitude: ${longitude.toFixed(6)}`;
+        }
+
+        function handleError(error) {
+            console.error("Error getting location: ", error);
+            coordinatesDiv.textContent = "Unable to retrieve location.";
+        }
+
+        function startTracking() {
+            if (navigator.geolocation) {
+                watchId = navigator.geolocation.watchPosition(
+                    updateCoordinates,
+                    handleError,
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0,
+                    }
+                );
+            } else {
+                console.error("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function stopTracking() {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null; // Clear the watch ID to prevent future issues
+            }
+        }
+
+        startButton.addEventListener('click', () => {
+            startTracking();
+            startButton.disabled = true; // Disable the button after starting tracking
+        });
+
+
+    </script>
+</body>
+
+</html>
